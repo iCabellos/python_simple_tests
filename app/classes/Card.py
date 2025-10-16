@@ -20,10 +20,14 @@ class Attack:
         self.id = id
         self.name: str = name
         self.base_damage: int = base_damage
+        self.validate_based_damage()
 
     def __str__(self):
         return f"{self.name, self.id, self.base_damage}"
 
+    def validate_based_damage(self):
+        if self.base_damage < 0:
+            raise ValueError("Daño base inválido")
 
 
 @dataclass
@@ -59,7 +63,7 @@ class TrainerCard(Card):
 
 
 
-rayo = Attack(id=8, name="Rayo", base_damage=100)
+rayo = Attack(id=8, name="Rayo", base_damage=-56)
 pokemonCard = PokemonCard(id=5, name="Pikachu", type=Type.LIGHTNING, hp=100, attacks=[rayo])
 energyCard = EnergyCard(id=6, name="Fire")
 trainerCard = TrainerCard(id=7, name="Potion")
