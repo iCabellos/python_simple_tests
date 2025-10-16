@@ -69,8 +69,11 @@ def attach_energy(pokemon: PokemonCard, energy_card: EnergyCard):
     pokemon.attached_energy[energy_card.etype] += 1
     print(pokemon.attached_energy)
 
+def apply_damage(pokemon: PokemonCard, base_damage: int):
+    pokemon.hp_current = max(0, pokemon.hp_current - base_damage)
 
-rayo = Attack(id=8, name="Rayo", base_damage=100)
+
+rayo = Attack(id=8, name="Rayo", base_damage=5)
 pokemonCard = PokemonCard(id=5, name="Pikachu", type=Type.LIGHTNING, hp=100, attacks=[rayo])
 energyCard = EnergyCard(id=6, name="Colourless", etype=Type.COLOURLESS)
 trainerCard = TrainerCard(id=7, name="Potion")
