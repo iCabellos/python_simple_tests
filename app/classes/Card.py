@@ -1,4 +1,17 @@
 from dataclasses import dataclass
+from enum import Enum
+
+
+# create enum type
+
+class Type(Enum):
+    FIRE = 1
+    WATER =2
+    GRASS = 3
+    LIGHTNING = 4
+    PSYCHIC = 5
+    FIGHTING = 6
+    COLOURLESS = 7
 
 
 @dataclass
@@ -7,11 +20,36 @@ class Card:
         self.id = id
         self.name = name
 
-
     def __str__(self):
         return f"{self.name, self.id}"
 
 
+class PokemonCard(Card):
+    def __init__(self, id, name, type, hp):
+        super().__init__(id, name)
+        self.type = type
+        self.hp = hp
+        self.hp_current = self.hp
 
-card = Card(id=4, name="Pikatchu")
-print(card)
+    def __str__(self):
+        return f"{self.name, self.id, self.type, self.hp_current}"
+
+
+class EnergyCard(Card):
+    def __init__(self, id, name):
+        super().__init__(id, name)
+
+
+class TrainerCard(Card):
+    def __init__(self, id, name):
+        super().__init__(id, name)
+
+
+pokemonCard = PokemonCard(id=5, name="Pikachu", type=Type.LIGHTNING, hp=100)
+energyCard = EnergyCard(id=6, name="Fire")
+trainerCard = TrainerCard(id=7, name="Potion")
+print(pokemonCard)
+print(energyCard)
+print(trainerCard)
+
+
