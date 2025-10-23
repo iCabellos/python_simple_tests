@@ -6,12 +6,27 @@ from enum import Enum
 
 class Type(Enum):
     FIRE = 1
-    WATER =2
+    WATER = 2
     GRASS = 3
     LIGHTNING = 4
     PSYCHIC = 5
     FIGHTING = 6
     COLOURLESS = 7
+
+
+class Attack:
+    def __init__(self, id, name, base_damage):
+        self.id = id
+        self.name: str = name
+        self.base_damage: int = base_damage
+        self.validate_based_damage()
+
+    def __str__(self):
+        return f"{self.name, self.id, self.base_damage}"
+
+    def validate_based_damage(self):
+        if self.base_damage < 0:
+            raise ValueError("Daño base inválido")
 
 
 @dataclass
@@ -25,14 +40,15 @@ class Card:
 
 
 class PokemonCard(Card):
-    def __init__(self, id, name, type, hp):
+    def __init__(self, id, name, type, hp, attacks: list):
         super().__init__(id, name)
         self.type = type
         self.hp = hp
         self.hp_current = self.hp
+        self.attacks = attacks
 
     def __str__(self):
-        return f"{self.name, self.id, self.type, self.hp_current}"
+        return f"{self.name, self.id, self.type, self.hp}"
 
 
 class EnergyCard(Card):
@@ -45,11 +61,10 @@ class TrainerCard(Card):
         super().__init__(id, name)
 
 
-pokemonCard = PokemonCard(id=5, name="Pikachu", type=Type.LIGHTNING, hp=100)
+rayo = Attack(id=8, name="Rayo", base_damage=-56)
+pokemonCard = PokemonCard(id=5, name="Pikachu", type=Type.LIGHTNING, hp=100, attacks=[rayo])
 energyCard = EnergyCard(id=6, name="Fire")
 trainerCard = TrainerCard(id=7, name="Potion")
 print(pokemonCard)
 print(energyCard)
 print(trainerCard)
-
-
