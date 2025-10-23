@@ -14,7 +14,6 @@ class Type(Enum):
     COLOURLESS = 7
 
 
-
 class Attack:
     def __init__(self, id, name, base_damage):
         self.id = id
@@ -60,7 +59,6 @@ class EnergyCard(Card):
 class TrainerCard(Card):
     def __init__(self, id, name):
         super().__init__(id, name)
-
 
 
 rayo = Attack(id=8, name="Rayo", base_damage=-56)
