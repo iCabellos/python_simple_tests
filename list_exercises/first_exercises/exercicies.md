@@ -86,7 +86,7 @@ Guía paso a paso en **Python** para levantar los cimientos de un sistema de com
 
 ## 6) Daño directo
 
-**Enunciado**: Implementa `apply_damage(pokemon: PokemonCard, amount: int)` que reduzca `hp_current` sin bajar de 0.
+**Enunciado**: Implementa `apply_damage(pokemon: PokemonCard, Attack.base_damage: int)` que reduzca `hp_current` sin bajar de 0.
 
 **Descripción breve**: Primer contacto con la lógica de **daño** y límites de valores.
 
