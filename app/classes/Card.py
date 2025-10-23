@@ -13,8 +13,6 @@ class Type(Enum):
     FIGHTING = 6
     COLOURLESS = 7
 
-
-
 class Attack:
     def __init__(self, id, name, base_damage):
         self.id = id
