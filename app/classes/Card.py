@@ -15,7 +15,6 @@ class Type(Enum):
     NONE = 8
     STEEL = 9
 
-
 class Attack:
     def __init__(self, id, name, base_damage):
         self.id = id
@@ -61,11 +60,9 @@ class EnergyCard(Card):
         super().__init__(id, name)
         self.etype: Type = etype
 
-
 class TrainerCard(Card):
     def __init__(self, id, name):
         super().__init__(id, name)
-
 
 def attach_energy(pokemon: PokemonCard, energy_card: EnergyCard):
     if energy_card.etype not in pokemon.attached_energy:
