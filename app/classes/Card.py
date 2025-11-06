@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
+from selectors import SelectSelector
 
 
 # create enum type
@@ -63,8 +64,41 @@ class EnergyCard(Card):
 
 
 class TrainerCard(Card):
-    def __init__(self, id, name):
+    def __init__(self, id: int, name):
         super().__init__(id, name)
+
+class Board:
+    def __init__(self, bench: list, active: Card):
+        self.bench = bench
+        self.active = active
+        if not self.validate_bench_board():
+            raise ValueError
+
+    def __str__(self):
+        return f"{self.active}, {self.bench}"
+
+    def validate_bench_board(self):
+        if len(self.bench) > 5:
+            return False
+        else:
+            return True
+
+    def move_to_bench(self, card, index_card = None):
+        if self.validate_bench_board():
+            self.bench.append(card)
+            if index_card is not None:
+                self.bench.pop(index_card)
+        else:
+            raise ValueError
+
+    def switch_active(self, new_active, index_bench_card = None):
+        if self.validate_bench_board():
+            self.move_to_bench(self.active, index_bench_card)
+            self.active = new_active
+        else:
+            imaginary_slot = self.active
+            self.move_to_bench(imaginary_slot, index_bench_card)
+            self.active = new_active
 
 
 def attach_energy(pokemon: PokemonCard, energy_card: EnergyCard):
@@ -97,4 +131,13 @@ pokemon3Card = PokemonCard(id=5, name="Onyx", type=Type.FIGHTING, hp=120, attack
                           resistance=Type.NONE)
 energyCard = EnergyCard(id=6, name="Colourless", etype=Type.COLOURLESS)
 trainerCard = TrainerCard(id=7, name="Potion")
-print(compute_damage(pokemon3Card, pokemon2Card, pokemon3Card.attacks[0]))
+
+pokemonlist = [pokemonCard, pokemon2Card]
+pokemon2list = [pokemonCard, pokemon3Card, pokemon2Card, pokemon3Card, pokemon2Card]
+
+board1 = Board(pokemonlist, pokemon2Card)
+board1.switch_active(pokemonCard, 0)
+
+board2 = Board(pokemon2list, pokemon3Card)
+board2.switch_active(pokemon2Card, 2)
+print(board2)

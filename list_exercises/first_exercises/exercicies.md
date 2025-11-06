@@ -118,7 +118,7 @@ Guía paso a paso en **Python** para levantar los cimientos de un sistema de com
 
 ## 8) Banco y Activo
 
-**Enunciado**: Crea `Board` con `active: PokemonCard | None` y `bench: list[PokemonCard]` (máx. 5). Implementa `switch_active(new_active)` que mueva uno del banco a activo (y el activo previo al banco).
+**Enunciado**: Crea `Board` con `active: PokemonCard` y `bench: list[PokemonCard] | None` (máx. 5). Implementa `switch_active(new_active)` que mueva uno del banco a activo (y el activo previo al banco).
 
 **Descripción breve**: Representas el **estado de mesa** básico.
 
