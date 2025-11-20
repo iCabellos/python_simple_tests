@@ -4,6 +4,12 @@ from selectors import SelectSelector
 
 
 # create enum type
+class Phase(Enum):
+    START = 1
+    MAIN = 2
+    ATTACK = 3
+    END = 4
+
 
 class Type(Enum):
     FIRE = 1
@@ -67,6 +73,7 @@ class TrainerCard(Card):
     def __init__(self, id: int, name):
         super().__init__(id, name)
 
+
 class Board:
     def __init__(self, bench: list, active: Card):
         self.bench = bench
@@ -83,7 +90,7 @@ class Board:
         else:
             return True
 
-    def move_to_bench(self, card, index_card = None):
+    def move_to_bench(self, card, index_card=None):
         if self.validate_bench_board():
             self.bench.append(card)
             if index_card is not None:
@@ -91,7 +98,7 @@ class Board:
         else:
             raise ValueError
 
-    def switch_active(self, new_active, index_bench_card = None):
+    def switch_active(self, new_active, index_bench_card=None):
         if self.validate_bench_board():
             self.move_to_bench(self.active, index_bench_card)
             self.active = new_active
@@ -101,14 +108,50 @@ class Board:
             self.active = new_active
 
 
+class TurnEngine:
+    phase = None
+
+    def next_phase(self):
+        if self.phase == Phase.END or self.phase is None:
+            self.phase = Phase.START
+            on_start()
+        elif self.phase == Phase.START:
+            self.phase = Phase.MAIN
+            on_main()
+        elif self.phase == Phase.MAIN:
+            self.phase = Phase.ATTACK
+            on_attack()
+        elif self.phase == Phase.ATTACK:
+            self.phase = Phase.END
+            on_end()
+
+
+def on_start():
+    pass
+
+
+def on_main():
+    pass
+
+
+def on_attack():
+    pass
+
+
+def on_end():
+    pass
+
+
 def attach_energy(pokemon: PokemonCard, energy_card: EnergyCard):
     if energy_card.etype not in pokemon.attached_energy:
         pokemon.attached_energy[energy_card.etype] = 0
     pokemon.attached_energy[energy_card.etype] += 1
     print(pokemon.attached_energy)
 
+
 def apply_damage(pokemon: PokemonCard, base_damage: int):
     return max(0, pokemon.hp_current - base_damage)
+
 
 def compute_damage(attacker: PokemonCard, defender: PokemonCard, attack: Attack):
     if attacker.type.value == defender.weakness.value:
@@ -120,15 +163,17 @@ def compute_damage(attacker: PokemonCard, defender: PokemonCard, attack: Attack)
 
     return apply_damage(defender, attack.base_damage)
 
+
 thunder = Attack(id=8, name="Thunder", base_damage=80)
 metal_arms = Attack(id=8, name="Metal Arms", base_damage=20)
 rock_tomb = Attack(id=8, name="Rock Tomb", base_damage=50)
 pokemonCard = PokemonCard(id=5, name="Pikachu", type=Type.LIGHTNING, hp=60, attacks=[thunder], weakness=Type.FIGHTING,
                           resistance=Type.LIGHTNING)
-pokemon2Card = PokemonCard(id=5, name="Skarmory", type=Type.STEEL, hp=120, attacks=[metal_arms], weakness=Type.LIGHTNING,
-                          resistance=Type.FIGHTING)
+pokemon2Card = PokemonCard(id=5, name="Skarmory", type=Type.STEEL, hp=120, attacks=[metal_arms],
+                           weakness=Type.LIGHTNING,
+                           resistance=Type.FIGHTING)
 pokemon3Card = PokemonCard(id=5, name="Onyx", type=Type.FIGHTING, hp=120, attacks=[rock_tomb], weakness=Type.GRASS,
-                          resistance=Type.NONE)
+                           resistance=Type.NONE)
 energyCard = EnergyCard(id=6, name="Colourless", etype=Type.COLOURLESS)
 trainerCard = TrainerCard(id=7, name="Potion")
 
@@ -140,4 +185,5 @@ board1.switch_active(pokemonCard, 0)
 
 board2 = Board(pokemon2list, pokemon3Card)
 board2.switch_active(pokemon2Card, 2)
-print(board2)
+
+turn_engine = TurnEngine()
