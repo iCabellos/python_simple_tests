@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from enum import Enum
 from selectors import SelectSelector
+from typing import List
+import random
 
 
 # create enum type
@@ -29,6 +31,14 @@ class Attack:
         self.name: str = name
         self.base_damage: int = base_damage
         self.validate_based_damage()
+        self.energy_cost: dict[Type, int] = {}
+
+    def can_pay_attack(self, pokemon):
+        for energy_type, required_amount in self.energy_cost.items():
+            available = pokemon.attached_energy.get(energy_type, 0)
+            if available < required_amount:
+                return False
+        return True
 
     def __str__(self):
         return f"{self.name, self.id, self.base_damage}"
@@ -49,7 +59,7 @@ class Card:
 
 
 class PokemonCard(Card):
-    def __init__(self, id, name, type: Type, hp, resistance: Type, weakness: Type, attacks: list):
+    def __init__(self, id, name, type: Type, hp, resistance: Type, weakness: Type, retreat_cost: int, attacks: list):
         super().__init__(id, name)
         self.type = type
         self.hp = hp
@@ -58,9 +68,36 @@ class PokemonCard(Card):
         self.resistance = resistance
         self.weakness = weakness
         self.attached_energy: dict = {}
+        self.retreat_cost = retreat_cost
+
+    def can_retreat(self):
+        if self.attached_energy.get(Type.COLOURLESS, 0) >= self.retreat_cost:
+            return True
+        raise Exception("Coste insuficiente")
+
+    def pay_retreat(self):
+        if self.can_retreat():
+            self.attached_energy[Type.COLOURLESS] -= self.retreat_cost
 
     def __str__(self):
         return f"{self.name, self.id, self.type, self.hp}"
+
+
+class Player:
+    def __init__(self, id, deck, board):
+        self.id: int = id
+        self.deck: List[Card] = deck
+        self.hand: List[Card] = []
+        self.discard: List[Card] = []
+        self.board: Board = board
+
+    def shuffle_deck(self):
+        random.shuffle(self.deck)
+
+    def draw(self, amount: int = 1):
+        drawn = self.deck[:amount]
+        self.hand.extend(drawn)
+        del self.deck[:amount]
 
 
 class EnergyCard(Card):
@@ -128,10 +165,11 @@ class TurnEngine:
 
 def on_start():
     pass
-
+    # TODO reset de la flag
 
 def on_main():
     pass
+# TODO jugar energia, no jugar energia, jugar una energia e intentar jugar otra energia
 
 
 def on_attack():
@@ -165,25 +203,26 @@ def compute_damage(attacker: PokemonCard, defender: PokemonCard, attack: Attack)
 
 
 thunder = Attack(id=8, name="Thunder", base_damage=80)
+thunder.energy_cost = {Type.LIGHTNING: 2, Type.COLOURLESS: 1}
 metal_arms = Attack(id=8, name="Metal Arms", base_damage=20)
+metal_arms.energy_cost = {Type.STEEL: 1}
 rock_tomb = Attack(id=8, name="Rock Tomb", base_damage=50)
 pokemonCard = PokemonCard(id=5, name="Pikachu", type=Type.LIGHTNING, hp=60, attacks=[thunder], weakness=Type.FIGHTING,
-                          resistance=Type.LIGHTNING)
+                          resistance=Type.LIGHTNING, retreat_cost=1)
 pokemon2Card = PokemonCard(id=5, name="Skarmory", type=Type.STEEL, hp=120, attacks=[metal_arms],
                            weakness=Type.LIGHTNING,
-                           resistance=Type.FIGHTING)
+                           resistance=Type.FIGHTING, retreat_cost=2)
 pokemon3Card = PokemonCard(id=5, name="Onyx", type=Type.FIGHTING, hp=120, attacks=[rock_tomb], weakness=Type.GRASS,
-                           resistance=Type.NONE)
+                           resistance=Type.NONE, retreat_cost=4)
 energyCard = EnergyCard(id=6, name="Colourless", etype=Type.COLOURLESS)
 trainerCard = TrainerCard(id=7, name="Potion")
 
-pokemonlist = [pokemonCard, pokemon2Card]
+pokemonCard.attached_energy = {Type.COLOURLESS: 4, Type.LIGHTNING: 3}
+pokemon2Card.attached_energy = {Type.COLOURLESS: 1}
+
+pokemonlist = [pokemon2Card]
 pokemon2list = [pokemonCard, pokemon3Card, pokemon2Card, pokemon3Card, pokemon2Card]
 
-board1 = Board(pokemonlist, pokemon2Card)
-board1.switch_active(pokemonCard, 0)
-
-board2 = Board(pokemon2list, pokemon3Card)
-board2.switch_active(pokemon2Card, 2)
-
+print(thunder.can_pay_attack(pokemonCard))
+print(metal_arms.can_pay_attack(pokemon2Card))
 turn_engine = TurnEngine()
